@@ -1,0 +1,156 @@
+program motor_registration
+    implicit none
+
+    ! Define the derived type for motor registration
+    type :: motor_vehicle
+        character(len=20) :: vehicle_type
+        real :: engine_size
+        character(len=10) :: reg_number
+        character(len=30) :: owner_name
+    end type motor_vehicle
+
+    ! Declare an array of motor vehicles
+    type(motor_vehicle), dimension(10) :: vehicles
+    integer :: i, num_vehicles, option
+
+    ! Initialize number of vehicles
+    num_vehicles = 0
+
+    ! Main menu loop
+    do
+        print *, 'Motor Registration System'
+        print *, '1. Insert a new vehicle record'
+        print *, '2. Update an existing vehicle record'
+        print *, '3. Delete a vehicle record'
+        print *, '4. Display all vehicle records'
+        print *, '5. Exit'
+        print *, 'Enter your choice:'
+        read *, option
+
+        select case(option)
+        case(1)
+            call insert_vehicle(vehicles, num_vehicles)
+        case(2)
+            call update_vehicle(vehicles, num_vehicles)
+        case(3)
+            call delete_vehicle(vehicles, num_vehicles)
+        case(4)
+            call display_vehicles(vehicles, num_vehicles)
+        case(5)
+            print *, 'Exiting the system.'
+            exit
+        case default
+            print *, 'Invalid option. Please try again.'
+        end select
+    end do
+
+contains
+
+    ! Subroutine to insert a new vehicle
+    subroutine insert_vehicle(vehicles, num_vehicles)
+        type(motor_vehicle), dimension(10), intent(inout) :: vehicles
+        integer, intent(inout) :: num_vehicles
+
+        if (num_vehicles >= 10) then
+            print *, 'Vehicle list is full, cannot insert new record.'
+            return
+        end if
+
+        num_vehicles = num_vehicles + 1
+        print *, 'Enter details for vehicle ', num_vehicles
+        print *, 'Enter vehicle type (e.g., car, motorcycle):'
+        read *, vehicles(num_vehicles)%vehicle_type
+        print *, 'Enter engine size (in liters):'
+        read *, vehicles(num_vehicles)%engine_size
+        print *, 'Enter registration number:'
+        read *, vehicles(num_vehicles)%reg_number
+        print *, 'Enter owner name:'
+        read *, vehicles(num_vehicles)%owner_name
+
+        print *, 'Vehicle successfully inserted!'
+    end subroutine insert_vehicle
+
+    ! Subroutine to update an existing vehicle
+    subroutine update_vehicle(vehicles, num_vehicles)
+        type(motor_vehicle), dimension(10), intent(inout) :: vehicles
+        integer, intent(in) :: num_vehicles
+        integer :: index
+
+        if (num_vehicles == 0) then
+            print *, 'No vehicles to update.'
+            return
+        end if
+
+        print *, 'Enter the vehicle index (1 to ', num_vehicles, ') to update:'
+        read *, index
+
+        if (index < 1 .or. index > num_vehicles) then
+            print *, 'Invalid vehicle index.'
+            return
+        end if
+
+        print *, 'Enter new details for vehicle ', index
+        print *, 'Enter vehicle type (e.g., car, motorcycle):'
+        read *, vehicles(index)%vehicle_type
+        print *, 'Enter engine size (in liters):'
+        read *, vehicles(index)%engine_size
+        print *, 'Enter registration number:'
+        read *, vehicles(index)%reg_number
+        print *, 'Enter owner name:'
+        read *, vehicles(index)%owner_name
+
+        print *, 'Vehicle record updated successfully!'
+    end subroutine update_vehicle
+
+    ! Subroutine to delete a vehicle record
+    subroutine delete_vehicle(vehicles, num_vehicles)
+        type(motor_vehicle), dimension(10), intent(inout) :: vehicles
+        integer, intent(inout) :: num_vehicles
+        integer :: index, i
+
+        if (num_vehicles == 0) then
+            print *, 'No vehicles to delete.'
+            return
+        end if
+
+        print *, 'Enter the vehicle index (1 to ', num_vehicles, ') to delete:'
+        read *, index
+
+        if (index < 1 .or. index > num_vehicles) then
+            print *, 'Invalid vehicle index.'
+            return
+        end if
+
+        ! Shift records to fill the gap
+        do i = index, num_vehicles - 1
+            vehicles(i) = vehicles(i + 1)
+        end do
+
+        ! Decrease the number of vehicles
+        num_vehicles = num_vehicles - 1
+        print *, 'Vehicle record deleted successfully!'
+    end subroutine delete_vehicle
+
+    ! Subroutine to display all vehicle records
+    subroutine display_vehicles(vehicles, num_vehicles)
+        type(motor_vehicle), dimension(10), intent(in) :: vehicles
+        integer, intent(in) :: num_vehicles
+        integer :: i
+
+        if (num_vehicles == 0) then
+            print *, 'No vehicles registered.'
+            return
+        end if
+
+        print *, 'Motor Vehicles Registered:'
+        do i = 1, num_vehicles
+            print *, 'Vehicle ', i
+            print *, '  Type: ', vehicles(i)%vehicle_type
+            print *, '  Engine Size: ', vehicles(i)%engine_size, ' liters'
+            print *, '  Registration Number: ', vehicles(i)%reg_number
+            print *, '  Owner: ', vehicles(i)%owner_name
+        end do
+    end subroutine display_vehicles
+
+end program motor_registration
+
